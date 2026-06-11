@@ -9,6 +9,8 @@ services:
     volumes:
       - ./backend/app:/app/app
       - ./backend/tests:/app/tests
+    env_file:
+      - ./backend/.env
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
