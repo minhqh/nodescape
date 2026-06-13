@@ -6,7 +6,7 @@ app = FastAPI(title="Nodescape API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Cho phép URL của React
+    allow_origins=["*"],  # Cho phép URL của React
     allow_credentials=True,
     allow_methods=["*"],  # Cho phép tất cả các phương thức GET, POST, PUT, DELETE
     allow_headers=["*"],  # Cho phép tất cả các headers
