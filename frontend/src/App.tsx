@@ -24,7 +24,7 @@ function App() {
 
   const fetchSavedTrees = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/trees/');
+      const response = await axios.get('https://nodescape-o7k3.onrender.com/api/v1/trees/');
       setSavedTrees(response.data);
     } catch (error) {
       console.error(error);
@@ -39,7 +39,7 @@ function App() {
     const value = parseInt(inputValue);
     if (isNaN(value)) { alert("Vui lòng nhập số nguyên!"); return; }
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/trees/process-action', {
+      const response = await axios.post('https://nodescape-o7k3.onrender.com/api/v1/trees/process-action', {
         action, value, current_tree: treeState
       });
       setTreeState(response.data.tree_data);
@@ -51,7 +51,7 @@ function App() {
   const handleSaveToDatabase = async () => {
     if (!treeState || !treeName.trim()) { alert("Vui lòng kiểm tra lại cây hoặc tên cây!"); return; }
     try {
-      await axios.post('http://localhost:8000/api/v1/trees/', { name: treeName, tree_data: treeState });
+      await axios.post('https://nodescape-o7k3.onrender.com/api/v1/trees/', { name: treeName, tree_data: treeState });
       alert("Đã lưu cây thành công!");
       setTreeName('');
       fetchSavedTrees();
@@ -63,7 +63,7 @@ function App() {
     e.stopPropagation(); // Ngăn sự kiện click kích hoạt việc tải cây
     if (!window.confirm("Bạn có chắc chắn muốn xóa cây này khỏi bộ nhớ?")) return;
     try {
-      await axios.delete(`http://localhost:8000/api/v1/trees/${id}`);
+      await axios.delete(`https://nodescape-o7k3.onrender.com/api/v1/trees/${id}`);
       fetchSavedTrees();
       alert("Đã xóa cây!");
     } catch (error) { alert("Xóa thất bại!"); }
@@ -74,7 +74,7 @@ function App() {
     if (!aiPrompt.trim()) return;
     try {
       setIsAiLoading(true);
-      const response = await axios.post('http://localhost:8000/api/v1/trees/ai-generate', {
+      const response = await axios.post('https://nodescape-o7k3.onrender.com/api/v1/trees/ai-generate', {
         prompt: aiPrompt
       });
       setTreeState(response.data.tree_data);
@@ -94,7 +94,7 @@ function App() {
     if (!treeState || isAnimating) return;
     try {
       setIsAnimating(true);
-      const response = await axios.post('http://localhost:8000/api/v1/trees/process-action', {
+      const response = await axios.post('https://nodescape-o7k3.onrender.com/api/v1/trees/process-action', {
         action: 'insert', value: 0, current_tree: treeState
       });
       let path: number[] = [];
