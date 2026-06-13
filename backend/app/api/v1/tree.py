@@ -30,3 +30,47 @@ def get_tree(tree_id: str):
         return data[1][0]
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+from typing import Optional, Dict, Any
+from pydantic import BaseModel
+from app.services.tree_logic import BinarySearchTree, Node
+
+# Định nghĩa cấu trúc request nhận từ Frontend
+class TreeActionRequest(BaseModel):
+    action: str  # "insert" hoặc "delete"
+    value: int
+    current_tree: Optional[Dict[str, Any]] = None
+
+# Hàm helper đệ quy để dựng lại đối tượng Node từ JSON nhận được của Frontend
+def deserialize_tree(d: Optional[Dict[str, Any]]) -> Optional[Node]:
+    if not d:
+        return None
+    node = Node(d["value"])
+    node.left = deserialize_tree(d.get("left"))
+    node.right = deserialize_tree(d.get("right"))
+    return node
+
+@router.post("/process-action")
+def process_tree_action(payload: TreeActionRequest):
+    # 1. Khởi tạo thực thể BST mới
+    tree = BinarySearchTree()
+    
+    # 2. Nếu Frontend có gửi cây hiện tại lên, dựng lại cây đó ở Backend
+    if payload.current_tree:
+        tree.root = deserialize_tree(payload.current_tree)
+    
+    # 3. Thực hiện hành động tương ứng bằng Core Logic đã viết ở Task 2
+    if payload.action == "insert":
+        tree.insert(payload.value)
+    elif payload.action == "delete":
+        tree.delete(payload.value)
+    else:
+        raise HTTPException(status_code=400, detail="Hành động không hợp lệ")
+        
+    # 4. Trả về cấu trúc cây mới cùng với kết quả duyệt cây để FE cập nhật trạng thái
+    return {
+        "tree_data": tree.get_tree_state(),
+        "inorder": tree.inorder(),
+        "preorder": tree.preorder(),
+        "postorder": tree.postorder()
+    }
